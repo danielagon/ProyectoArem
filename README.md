@@ -2,8 +2,6 @@
 
 ### Integrantes: 
 
-```
-- Daniela González
-- Mateo Guzmán
-- Diana Sánchez
-```
+    * Daniela González
+    * Mateo Guzmán
+    * Diana Sánchez
