@@ -14,7 +14,7 @@ public class Cuadrado {
     public static void main(String[] args){
 
         ClassLoader classLoader = Cuadrado.class.getClassLoader();
-
+        
         try {
             Class aClass = classLoader.loadClass("com.escuelaing.Cuadrado");
             System.out.println("aClass.getName() = " + aClass.getName());
