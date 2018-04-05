@@ -37,7 +37,7 @@ public class HttpServer implements Runnable{
                 String inputLine, outputLine,datos;
                 while ((inputLine = in.readLine()) != null) {
                     System.out.println("Received: " + inputLine);
-                    if (inputLine.startsWith("GET")) {
+                    if (inputLine.contains("GET")) {
                         String input = inputLine.split(" ")[1];
                         if (input.equals("/") || input.equals("/index.html")){
                             Resource file = new ClassPathXmlApplicationContext("applicationContext.xml").getResource("/index.html");

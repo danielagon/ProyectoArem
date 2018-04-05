@@ -5,7 +5,13 @@
  */
 package com.escuelaing.httpserver;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,11 +21,23 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComponenteInterImpl implements ComponenteInter{
     
-    @Autowired
-    private Interfaz interfazComp;
-    
     @Override
     public String getValue(String number){
-        return interfazComp.getValue(number);
+        URL urlApp = null;
+        String datos = "",input = null;
+        try{
+            urlApp = new URL("https://agile-springs-99176.herokuapp.com/cuadrado/"+number);
+        }catch (MalformedURLException e){
+            Logger.getLogger(ComponenteInterImpl.class.getName()).log(Level.SEVERE,null,e);
+        }
+        try{
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlApp.openStream()));
+            while ((input = br.readLine()) != null){
+                datos+=input;
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ComponenteInterImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return datos;
     }
 }
