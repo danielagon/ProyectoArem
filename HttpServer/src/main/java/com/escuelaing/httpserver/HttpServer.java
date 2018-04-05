@@ -18,10 +18,10 @@ import org.springframework.core.io.Resource;
  */
 public class HttpServer implements Runnable{
     
-    private Socket clientSocket = null;
+    private ServerSocket clientSocket = null;
     private ComponenteInter comp;
 
-    public HttpServer(Socket clientSocket, ComponenteInter comp) {
+    public HttpServer(ServerSocket clientSocket, ComponenteInter comp) {
         this.clientSocket = clientSocket;
         this.comp = comp;
     }
@@ -30,15 +30,20 @@ public class HttpServer implements Runnable{
     public void run(){
         try {
             while (true){
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                String inputLine, outputLine,texto,datos="";
+                Socket socket = null;
+                socket = clientSocket.accept();
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+                String inputLine, outputLine,datos;
                 while ((inputLine = in.readLine()) != null) {
-                    if (inputLine.contains("GET")) {
-                        inputLine = inputLine.split(" ")[1];
-                        if (inputLine.contains("/") || inputLine.contains("/index.html")){
+                    System.out.println("Received: " + inputLine);
+                    if (inputLine.startsWith("GET")) {
+                        String input = inputLine.split(" ")[1];
+                        if (input.equals("/") || input.equals("/index.html")){
                             Resource file = new ClassPathXmlApplicationContext("applicationContext.xml").getResource("/index.html");
+                            datos = "";
                             BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()));
+                            String texto;
                             while ((texto = br.readLine()) != null){
                                 datos+=texto;
                             }
@@ -49,22 +54,25 @@ public class HttpServer implements Runnable{
                                     +"\r\n\r\n"
                                     + datos;
                             out.println(outputLine);
-                        }else if (inputLine.contains("cuadrado")){
+                        }else if (input.contains("cuadrado")){
                             outputLine = "HTTP/1.1 200 OK\r\n"
                                     + "Content-Type: " 
                                     + "text/html"
                                     + "\r\n\r\n"
-                                    +comp.getValue(String.valueOf(inputLine.split("/")[2])); 
+                                    +comp.getValue(String.valueOf(input.split("/")[2])); 
                             out.println(outputLine);
                         }
                     }
                     if (!in.ready()){
                         break;
                     }
-                }
+                    if (inputLine.equals("")){
+                        break;
+                    }
+                } 
                 out.close();
                 in.close();
-                clientSocket.close(); 
+                socket.close();
             }
         }catch (IOException e){
             Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, e);
