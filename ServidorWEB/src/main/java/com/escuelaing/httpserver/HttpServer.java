@@ -9,8 +9,6 @@ import java.net.*;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.core.io.Resource;
 
 /**
  *
@@ -40,9 +38,9 @@ public class HttpServer implements Runnable{
                     if (inputLine.contains("GET")) {
                         String input = inputLine.split(" ")[1];
                         if (input.equals("/") || input.equals("/index.html")){
-                            Resource file = new ClassPathXmlApplicationContext("applicationContext.xml").getResource("/index.html");
+                            URL file = HttpServer.class.getResource("/index.html");
                             datos = "";
-                            BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()));
+                            BufferedReader br = new BufferedReader(new InputStreamReader(file.openStream()));
                             String texto;
                             while ((texto = br.readLine()) != null){
                                 datos+=texto;
@@ -54,12 +52,19 @@ public class HttpServer implements Runnable{
                                     +"\r\n\r\n"
                                     + datos;
                             out.println(outputLine);
-                        }else if (input.contains("cuadrado")){
+                        }else if (input.contains("/response")){
+                            ClassLoader classLoader = HttpServer.class.getClassLoader();
+                            Class aClass = null;
+                            try {
+                                aClass = classLoader.loadClass("com.escuelaing.httpserver."+input.split("/")[2]);
+                            } catch (ClassNotFoundException ex) {
+                                Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             outputLine = "HTTP/1.1 200 OK\r\n"
                                     + "Content-Type: " 
                                     + "text/html"
                                     + "\r\n\r\n"
-                                    +comp.getValue(String.valueOf(input.split("/")[2])); 
+                                    +comp.getValue(String.valueOf(input.split("/")[3]),aClass); 
                             out.println(outputLine);
                         }
                     }
@@ -78,4 +83,5 @@ public class HttpServer implements Runnable{
             Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, e);
         }
     }
+
 }

@@ -5,10 +5,12 @@
  */
 package com.escuelaing.httpserver;
 
+import java.net.URL;
+
 /**
  *
- * @author danielagonzalez
+ * @author diana
  */
-public interface ComponenteInter {
-    public String getValue(String number, Class clase);
+public interface Operation {
+    public URL getUrl(String number);
 }

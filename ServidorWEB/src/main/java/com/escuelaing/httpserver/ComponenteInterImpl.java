@@ -12,24 +12,32 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.springframework.stereotype.Service;
 
 /**
  *
  * @author danielagonzalez
  */
-@Service
 public class ComponenteInterImpl implements ComponenteInter{
     
     @Override
-    public String getValue(String number){
+    public String getValue(String number, Class clase){
         URL urlApp = null;
         String datos = "",input = null;
-        try{
-            urlApp = new URL("https://agile-springs-99176.herokuapp.com/cuadrado/"+number);
-        }catch (MalformedURLException e){
-            Logger.getLogger(ComponenteInterImpl.class.getName()).log(Level.SEVERE,null,e);
+        Operation operation=null;
+        try {
+            operation = (Operation) Class.forName(clase.getName()).newInstance();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ComponenteInterImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(ComponenteInterImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(ComponenteInterImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+            urlApp= operation.getUrl(number);
+            //urlApp = new URL("https://agile-springs-99176.herokuapp.com/"+nameClass+"/"+number);
+        
+        
         try{
             BufferedReader br = new BufferedReader(new InputStreamReader(urlApp.openStream()));
             while ((input = br.readLine()) != null){

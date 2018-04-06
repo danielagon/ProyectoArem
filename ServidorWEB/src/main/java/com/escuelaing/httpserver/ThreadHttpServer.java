@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  *
@@ -22,8 +20,7 @@ public class ThreadHttpServer {
         try { 
             serverSocket = new ServerSocket(8080);
             ExecutorService executor = Executors.newFixedThreadPool(1); 
-            ApplicationContext aplicacion = new ClassPathXmlApplicationContext("applicationContext.xml");
-            ComponenteInter comp = aplicacion.getBean(ComponenteInterImpl.class);
+            ComponenteInter comp = new ComponenteInterImpl();
             executor.execute(new HttpServer(serverSocket,comp));
         } catch (IOException e) {
             System.err.println("Could not listen on port.");

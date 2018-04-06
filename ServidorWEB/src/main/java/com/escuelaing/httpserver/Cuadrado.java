@@ -5,21 +5,27 @@
  */
 package com.escuelaing.httpserver;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author 2109734
  */
-public class Cuadrado {
+public class Cuadrado implements Operation{
 
-    public static void main(String[] args){
-
-        ClassLoader classLoader = Cuadrado.class.getClassLoader();
-        
+    @Override
+    public URL getUrl(String number) {
+        URL url= null;
         try {
-            Class aClass = classLoader.loadClass("com.escuelaing.Cuadrado");
-            System.out.println("aClass.getName() = " + aClass.getName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            url= new URL("https://agile-springs-99176.herokuapp.com/cuadrado/"+number);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Cuadrado.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return url;
     }
+
+    
 }
